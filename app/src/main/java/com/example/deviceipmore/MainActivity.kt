@@ -85,35 +85,3 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
-
-//    fun gatherInfo(): Map<String, String> {
-//        var myIp = ""
-//        var myData = ""
-//        val Info: HashMap<String, String> = HashMap<String, String>()
-//        println("IP")
-//
-////        var connect: URLConnection = URL("https://checkip.amazonaws.com").openConnection()
-////        myIp = connect.inputStream.bufferedReader().readText()
-////
-////        connect= URL("https://ip-api.com/json/$myIp").openConnection()
-////        myData = (connect.inputStream.bufferedReader().readText()).replace("""[{"}]""".toRegex(),"")
-//
-//        Executors.newSingleThreadExecutor().execute {
-//            var connection = URL("https://checkip.amazonaws.com").openConnection()
-//            myIp = connection.inputStream.bufferedReader().readText()
-//        }
-//
-//        println("DATA")
-//        Executors.newSingleThreadExecutor().execute {
-//            val connection = URL("https://ip-api.com/json/$myIp").openConnection()
-//            myData = (connection.inputStream.bufferedReader().readText())
-//            println(myData)
-//        }
-//        println(myData)
-//
-//
-//
-//        println("PUT")
-//        return Info
-//    }
-}
