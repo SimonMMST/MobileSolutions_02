@@ -1,7 +1,6 @@
 package com.example.deviceipmore
 
 import android.annotation.SuppressLint
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -11,77 +10,74 @@ import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import java.lang.Exception
 
+const val IP_AND_DETAILS: String = "http://ip-api.com/json/"
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var textView: TextView
-    var myData: HashMap<String,String> =  HashMap<String,String>()
+    private var myData: HashMap<String, String> = HashMap()
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (Build.VERSION.SDK_INT > 9) {
-            val policy = ThreadPolicy.Builder().permitAll().build()
-            StrictMode.setThreadPolicy(policy)
-        }
+        val policy = ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
 
-        val status = findViewById(R.id.Status) as TextView
-        val ipAddress = findViewById(R.id.IP_Address) as TextView
-        val isp = findViewById(R.id.ISP) as TextView
-        val country = findViewById(R.id.Country) as TextView
-        val region = findViewById(R.id.Region) as TextView
-        val organization = findViewById(R.id.Organization) as TextView
-        val orgAlsoKnownAs = findViewById(R.id.OrgAlsoKnownAs) as TextView
+        val scanButton = findViewById<Button>(R.id.ScanButton)
 
-        val scanButton = findViewById(R.id.ScanButton) as Button
+        scanButton.setOnClickListener {
+            val myRawData: String = getDataFromURL().replace("""[{"}]""".toRegex(), "")
 
-        scanButton.setOnClickListener(){
-            val checkIpSite: String = "http://checkip.amazonaws.com"
-            val checkInfoAboutIp: String = "http://ip-api.com/json/"
-            var myIp: String = ""
-            var myRawData: String = ""
-
-            try {
-                    myIp = URL(checkIpSite).readText()
-                    ipAddress.text = myIp
-                    status.text = "SCANNED"
-            }catch (e: Exception){
-                status.text = "FAILED SCAN"
-            }
-
-            if (myIp != ""){
-                try {
-                    var connect= URL(checkInfoAboutIp+myIp).openConnection()
-                    myRawData = (connect.inputStream.bufferedReader().readText()).replace("""[{"}]""".toRegex(),"")
-
-                    myRawData.split(",").forEach{
-                        val pair = it.split(":")
-                        myData.put(pair[0],pair[1])
-                    }
-                    //keys: status country countryCode region regionName city zip lat lon timezone isp org as query
-                    country.text = myData.get("countryCode") + ":" + myData.get("country")
-                    region.text = myData.get("regionName")
-                    isp.text = myData.get("isp")
-                    organization.text = myData.get("org")
-                    orgAlsoKnownAs.text = myData.get("as")
-
-
-
-                }catch (e: Exception){
-                    println(e.toString())
-                    status.text = "FAILED DETAILED SCAN"
+            if (myRawData != "") {
+                myRawData.split(",").forEach {
+                    val pair = it.split(":")
+                    myData[pair[0]] = pair[1]
                 }
+                setView(true)
             }
             else{
-                country.text = ""
-                region.text = ""
-                isp.text = ""
-                organization.text = ""
-                orgAlsoKnownAs.text = ""
-                ipAddress.text = ""
+                setView(false)
             }
-
         }
     }
+
+    @SuppressLint("SetTextI18n")
+    fun setView(getData: Boolean) {
+        val status : TextView = findViewById(R.id.Status)
+        val ipAddress : TextView = findViewById(R.id.IP_Address)
+        val isp : TextView = findViewById(R.id.ISP)
+        val country : TextView = findViewById(R.id.Country)
+        val region : TextView = findViewById(R.id.Region)
+        val organization : TextView = findViewById(R.id.Organization)
+        val orgAlsoKnownAs : TextView = findViewById(R.id.OrgAlsoKnownAs)
+
+        if (getData) {
+            //keys: status country countryCode region regionName city zip lat lon timezone isp org as query
+            status.text = myData["status"]?.uppercase()
+            country.text = myData["countryCode"] + ":" + myData["country"]
+            region.text = myData["regionName"]
+            isp.text = myData["isp"]
+            organization.text = myData["org"]
+            orgAlsoKnownAs.text = myData["as"]
+            ipAddress.text = myData["query"]
+        } else {
+            status.text = "Fail"
+            country.text = ""
+            region.text = ""
+            isp.text = ""
+            organization.text = ""
+            orgAlsoKnownAs.text = ""
+            ipAddress.text = ""
+        }
+    }
+
+    private fun getDataFromURL(url: String = IP_AND_DETAILS): String {
+        return try {
+            val connection = URL(url).openConnection()
+            connection.inputStream.bufferedReader().readText()
+        } catch (e: Exception) {
+            ""
+        }
+    }
+}
