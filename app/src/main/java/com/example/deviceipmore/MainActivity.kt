@@ -35,8 +35,7 @@ class MainActivity : AppCompatActivity() {
                     myData[pair[0]] = pair[1]
                 }
                 setView(true)
-            }
-            else{
+            } else {
                 setView(false)
             }
         }
@@ -44,13 +43,13 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     fun setView(getData: Boolean) {
-        val status : TextView = findViewById(R.id.Status)
-        val ipAddress : TextView = findViewById(R.id.IP_Address)
-        val isp : TextView = findViewById(R.id.ISP)
-        val country : TextView = findViewById(R.id.Country)
-        val region : TextView = findViewById(R.id.Region)
-        val organization : TextView = findViewById(R.id.Organization)
-        val orgAlsoKnownAs : TextView = findViewById(R.id.OrgAlsoKnownAs)
+        val status: TextView = findViewById(R.id.Status)
+        val ipAddress: TextView = findViewById(R.id.IP_Address)
+        val isp: TextView = findViewById(R.id.ISP)
+        val country: TextView = findViewById(R.id.Country)
+        val region: TextView = findViewById(R.id.Region)
+        val organization: TextView = findViewById(R.id.Organization)
+        val orgAlsoKnownAs: TextView = findViewById(R.id.OrgAlsoKnownAs)
 
         if (getData) {
             //keys: status country countryCode region regionName city zip lat lon timezone isp org as query
